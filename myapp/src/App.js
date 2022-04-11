@@ -4,6 +4,8 @@ import './App.css';
 function App() {
   const [data,setData] = useState([]);
   const [fetchingData,setFetchingData] = useState(true);
+  const [value,setValue] = useState("");
+  const [fillteredData,setFillteredData] = useState([]);
 
   const fetchData = async ()=> {
     await fetch(
@@ -17,12 +19,26 @@ function App() {
 
   useEffect(()=>{
     fetchData();
+    setFillteredData(data);
   },[]);
+
+
+  const filter = (e) => {
+    if(e.target.value !== ""){
+      setValue(e.target.value);
+      const filteredTable = data.filter((id)=>id.name.toLowerCase().includes(e.target.value.toLowerCase()))
+      setFillteredData([...filteredTable]);
+    }else {
+      setValue(e.target.value);
+      setFillteredData([...data])
+    }
+
+  }
 
 
   return (
     <div className="App">
-      <input type="text" placeholder='Enter Name'/>
+      <input type="text" placeholder='Enter Name' value={value} onChange={filter}/>
       {fetchingData ? <h1>data Loading ....</h1> :
       <table>
         <tr>
@@ -32,7 +48,7 @@ function App() {
           <th>Email</th>
         </tr>
         <tbody>
-          {data.map((id)=>(
+          {fillteredData.map((id)=>(
           <tr>
           <td>{id.name}</td>
           <td>{id.username}</td>
